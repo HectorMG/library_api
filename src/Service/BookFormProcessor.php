@@ -4,29 +4,32 @@
 namespace App\Service;
 
 use App\Entity\Book;
+use App\Entity\Category;
 use App\Form\Model\BookDto;
 use App\Form\Model\CategoryDto;
 use App\Form\Type\BookFormType;
+use App\Repository\BookRepository;
+use App\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormFactoryInterface;
 
 class BookFormProcessor
 {
-    private $bookManager;
+    private $bookRepository;
     private $fileUploader;
-    private $categoryManager;
+    private $categoryRepository;
     private $formFactory;
 
     public function __construct(
-        BookManager $bookManager,
+        BookRepository $bookRepository,
         FileUploader $fileUploader, 
-        CategoryManager $categoryManager,
+        CategoryRepository $categoryRepository,
         FormFactoryInterface $formFactory
     ) {
-        $this->bookManager = $bookManager;
+        $this->bookRepository = $bookRepository;
         $this->fileUploader = $fileUploader;
-        $this->categoryManager = $categoryManager;
+        $this->categoryRepository = $categoryRepository;
         $this->formFactory = $formFactory;
     }
 
@@ -50,19 +53,19 @@ class BookFormProcessor
         if ($form->isValid()) {
             foreach ($originalCategories as $originalCategoryDto) {
                 if (!in_array($originalCategoryDto, $bookDto->categories)) {
-                    $category = $this->categoryManager->find($originalCategoryDto->id);
+                    $category = $this->categoryRepository->find($originalCategoryDto->id);
                     $book->removeCategory($category);
                 }
             }
 
             foreach ($bookDto->categories as $newCategory) {
                 if (!$originalCategories->contains($newCategory)) {
-                    $category = $this->categoryManager->find($newCategory->id ?? 0);
+                    $category = $this->categoryRepository->find($newCategory->id ?? 0);
 
                     if (!$category) {
-                        $category = $this->categoryManager->create();
+                        $category = Category::create();
                         $category->setName($newCategory->name);
-                        $this->categoryManager->save($category);
+                        $this->categoryRepository->save($category);
                     }
 
                     $book->addCategory($category);
@@ -74,7 +77,7 @@ class BookFormProcessor
                 $fileName = $this->fileUploader->uploadBase64File($bookDto->base64Image);
                 $book->setImage($fileName);
             }
-            $this->bookManager->save($book);
+            $this->bookRepository->save($book);
             return [$book, null];
         }
         return [null, $form];

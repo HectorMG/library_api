@@ -14,7 +14,13 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
-    const TOKEN = 'LIBRARY_TOKEN';
+    public $token;
+
+
+    public function __construct(string $apiToken) {
+        $this->token = $apiToken;
+    }
+
     /**
      * Called on every request to decide if this authenticator should be
      * used for the request. Returning `false` will cause this authenticator
@@ -36,8 +42,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        dd($credentials);
-        if (self::TOKEN !== $credentials) {
+        if ($this->token !== $credentials) {
             return null;
         }
 

@@ -13,6 +13,8 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Book|null findOneBy(array $criteria, array $orderBy = null)
  * @method Book[]    findAll()
  * @method Book[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @extends \Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository<Book>
+
  */
 class BookRepository extends ServiceEntityRepository
 {
@@ -20,6 +22,25 @@ class BookRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Book::class);
     }
+
+    public function save(Book $book): Book
+    {
+        $this->getEntityManager()->persist($book);
+        $this->getEntityManager()->flush();
+        return $book;
+    }
+
+    public function reload(Book $book): Book
+    {
+        $this->getEntityManager()->refresh($book);
+        return $book;
+    }
+
+    function delete(Book $book) {
+        $this->getEntityManager()->remove($book);
+        $this->getEntityManager()->flush();
+    }
+
 
 //    /**
 //     * @return Book[] Returns an array of Book objects

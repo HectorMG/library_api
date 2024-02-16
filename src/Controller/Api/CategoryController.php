@@ -2,9 +2,10 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\Category;
 use App\Form\Model\CategoryDto;
 use App\Form\Type\CategoryFormType;
-use App\Service\CategoryManager;
+use App\Repository\CategoryRepository;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,25 +16,25 @@ class CategoryController extends AbstractFOSRestController
      * @Rest\Get(path="/categories")
      * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
     */
-    public function getAction(CategoryManager $categoryManager)
+    public function getAction(CategoryRepository $categoryRepository)
     {
-        return $categoryManager->getRepository()->findAll();
+        return $categoryRepository->findAll();
     }
 
     /**
      * @Rest\Post(path="/category")
      * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
     */
-    public function postAction(Request $request, CategoryManager $categoryManager) {
+    public function postAction(Request $request, CategoryRepository $categoryRepository) {
 
         $categoryDto = new CategoryDto();
         $form = $this->createForm(CategoryFormType::class, $categoryDto);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() &&$form->isValid()) {
-            $category = $categoryManager->create();
+            $category = Category::create();
             $category->setName($categoryDto->name);
-            $categoryManager->save($category);
+            $categoryRepository->save($category);
             return $category;
         }
         return $form;

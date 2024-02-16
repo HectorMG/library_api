@@ -29,6 +29,10 @@ class Book
         $this->categories = new ArrayCollection();
     }
 
+    public static function create() : self {
+        return new Book();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
