@@ -73,4 +73,8 @@ class Category
 
         return $this;
     }
+
+    function __toString() : string {
+        return $this->name ?? 'Sin nombre';
+    }
 }

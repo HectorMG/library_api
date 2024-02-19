@@ -4,6 +4,7 @@
 namespace App\Service;
 
 use App\Entity\Book;
+use App\Entity\Book\Score;
 use App\Entity\Category;
 use App\Form\Model\BookDto;
 use App\Form\Model\CategoryDto;
@@ -37,11 +38,8 @@ class BookFormProcessor
     function __invoke(Book $book, Request $request): array {
         $bookDto = BookDto::createFromBook($book);
 
-        $originalCategories = new ArrayCollection();
         foreach($book->getCategories() as $category) {
-            $categoryDto = CategoryDto::createFromCategory($category);
-            $bookDto->categories[] = $categoryDto;
-            $originalCategories->add($categoryDto);
+            $bookDto->categories[] = CategoryDto::createFromCategory($category);
         }
 
         $form = $this->formFactory->create(BookFormType::class, $bookDto);
@@ -50,33 +48,25 @@ class BookFormProcessor
             return [null, "form not submitted"];
         }
 
+        $categories = [];
+        foreach ($bookDto->categories as $newCategoryDto) {
+            $category = $this->categoryRepository->find($newCategoryDto->id ?? 0);
+
+            if (!$category) {
+                $category = Category::create();
+                $category->setName($newCategoryDto->name);
+                $this->categoryRepository->save($category);
+            }
+
+            $categories[] = $category;
+        }
+
         if ($form->isValid()) {
-            foreach ($originalCategories as $originalCategoryDto) {
-                if (!in_array($originalCategoryDto, $bookDto->categories)) {
-                    $category = $this->categoryRepository->find($originalCategoryDto->id);
-                    $book->removeCategory($category);
-                }
-            }
-
-            foreach ($bookDto->categories as $newCategory) {
-                if (!$originalCategories->contains($newCategory)) {
-                    $category = $this->categoryRepository->find($newCategory->id ?? 0);
-
-                    if (!$category) {
-                        $category = Category::create();
-                        $category->setName($newCategory->name);
-                        $this->categoryRepository->save($category);
-                    }
-
-                    $book->addCategory($category);
-                }
-            }
-
-            $book->setTitle($bookDto->title);
+            $fileName = null;
             if ($bookDto->base64Image) {
                 $fileName = $this->fileUploader->uploadBase64File($bookDto->base64Image);
-                $book->setImage($fileName);
             }
+            $book->update($bookDto->title, $fileName, $bookDto->description, Score::create($bookDto->score), ...$categories);
             $this->bookRepository->save($book);
             return [$book, null];
         }

@@ -11,3 +11,9 @@ App\Entity\Book:
 
     categories:
         groups: ['book']
+
+    score:
+        groups: ['book']
+    
+    description:
+        groups: ['book']

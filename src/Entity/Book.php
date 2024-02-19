@@ -2,10 +2,13 @@
 
 namespace App\Entity;
 
+use App\Entity\Book\Score;
 use App\Repository\BookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Embedded;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
@@ -24,8 +27,15 @@ class Book
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'books')]
     private Collection $categories;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
+    #[Embedded(class: Score::class)]
+    private ?Score $score = null;
+
     public function __construct()
-    {
+    { 
+        $this->score = Score::create();
         $this->categories = new ArrayCollection();
     }
 
@@ -83,6 +93,60 @@ class Book
     {
         $this->categories->removeElement($category);
 
+        return $this;
+    }
+
+    public function update(string $title, ?string $image, ?string $description, ?Score $score, Category ...$categories) 
+    {
+        $this->title = $title;
+        $this->image = $image;
+        $this->description = $description;
+        $this->score = $score;
+
+        $this->updateCategories(...$categories);
+    }
+
+    function updateCategories(Category ...$categories) {
+        $originalCategories = new ArrayCollection();
+        foreach($this->categories as $category) {
+            $originalCategories->add($categories);
+        }
+
+        //Remove Categories
+        foreach ($originalCategories as $originalCategory) {
+            if (!in_array($originalCategory, $categories)) {
+                $this->removeCategory($originalCategory);
+            }
+        }
+
+        //Add Categories
+        foreach ($categories as $newCategory) {
+            if (!$originalCategories->contains($newCategory)) {
+                $this->addCategory($newCategory);
+            }
+        }
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getScore(): Score
+    {
+        return $this->score;
+    }
+
+    public function setScore(Score $score): self
+    {
+        $this->score = $score;
         return $this;
     }
 }

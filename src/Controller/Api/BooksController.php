@@ -45,8 +45,7 @@ class BooksController extends AbstractFOSRestController
      */
     function postAction(
         Request $request,
-        BookFormProcessor $bookFormProcessor,
-        BookRepository $bookRepository
+        BookFormProcessor $bookFormProcessor
     ) {
         $book = Book::create();
         [$book, $error] = $bookFormProcessor($book, $request);

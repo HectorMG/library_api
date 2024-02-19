@@ -6,9 +6,11 @@ use App\Entity\Book;
 
 class BookDto
 {
-    public string $title;
-    public string $base64Image;
-    public $categories;
+    public ?string $title;
+    public ?string $base64Image;
+    public array $categories;
+    public ?string $description;
+    public ?int $score;
 
 
     public function __construct() {
