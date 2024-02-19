@@ -27,6 +27,8 @@ services:
             $apiToken: '%app.api_token%'
     
     App\Service\Utils\HttpClientInterface: '@App\Service\Utils\HttpClient'
+    App\Service\Utils\WriteCsvInterface: '@App\Service\Utils\WriteCsv'
+
 
 
     # add more service definitions when explicit configuration is needed
@@ -68,3 +70,7 @@ services:
                 method: onAuthenticationSuccessResponse,
                 priority: -1000,
             }
+
+    App\Service\ExportInCsv:
+        arguments:
+            $projectFolder: '%kernel.project_dir%/'
