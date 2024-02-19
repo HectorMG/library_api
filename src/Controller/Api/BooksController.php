@@ -6,26 +6,29 @@ use App\Entity\Book;
 use App\Repository\BookRepository;
 use App\Service\BookFormProcessor;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
-use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Controller\Annotations\Delete;
+use FOS\RestBundle\Controller\Annotations\Get;
+use FOS\RestBundle\Controller\Annotations\Patch;
+use FOS\RestBundle\Controller\Annotations\Post;
+use FOS\RestBundle\Controller\Annotations\Put;
+use FOS\RestBundle\Controller\Annotations\View as ViewAtribute;
 use FOS\RestBundle\View\View;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class BooksController extends AbstractFOSRestController
 {
-    /**
-     * @Rest\Get("/books")
-     * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
-     */
+    
+    #[Get(path:"/books")]
+    #[ViewAtribute(serializerGroups: ["book"], serializerEnableMaxDepthChecks: true)]
     public function getAction(BookRepository $bookRepository)
     {
         return $bookRepository->findAll();
     }
 
-    /**
-     * @Rest\Get("/book/{id}", requirements={"id"="\d+"})
-     * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
-     */
+
+    #[Get(path:"/book/{id}", requirements: ["id" => "\d+"])]
+    #[ViewAtribute(serializerGroups: ["book"], serializerEnableMaxDepthChecks: true)]
     function getSingleAction(
         int $id,
         BookRepository $bookRepository
@@ -39,10 +42,8 @@ class BooksController extends AbstractFOSRestController
         return $book;
     }
 
-    /**
-     * @Rest\Post("/book", requirements={"id"="\d+"})
-     * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
-     */
+    #[Post(path:"/book",requirements:["id" => "\d+"]) ]
+    #[ViewAtribute(serializerGroups: ["book"], serializerEnableMaxDepthChecks: true)]
     function postAction(
         Request $request,
         BookFormProcessor $bookFormProcessor
@@ -57,10 +58,8 @@ class BooksController extends AbstractFOSRestController
     }
 
 
-    /**
-     * @Rest\Put("/book/{id}", requirements={"id"="\d+"})
-     * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
-     */
+    #[Put(path:"/book/{id}", requirements: ["id" => "\d+"]) ]
+    #[ViewAtribute(serializerGroups: ["book"], serializerEnableMaxDepthChecks: true)]
     public function editAction(
         int $id, 
         BookRepository $bookRepository,
@@ -81,10 +80,9 @@ class BooksController extends AbstractFOSRestController
         return $view;
     }
 
-     /**
-     * @Rest\Patch("/book/{id}", requirements={"id"="\d+"})
-     * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
-     */
+     
+    #[Patch(path:"/book/{id}", requirements: ["id" => "\d+"]) ]
+    #[ViewAtribute(serializerGroups: ["book"], serializerEnableMaxDepthChecks: true)]
     public function patchAction(
         int $id, 
         BookRepository $bookRepository,
@@ -103,10 +101,8 @@ class BooksController extends AbstractFOSRestController
     }
 
 
-    /**
-     * @Rest\Delete("/book/{id}", requirements={"id"="\d+"})
-     * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
-     */
+    #[Delete(path:"/book/{id}", requirements: ["id" => "\d+"]) ]
+    #[ViewAtribute(serializerGroups: ["book"], serializerEnableMaxDepthChecks: true)]
     public function deleteAction(
         int $id, 
         BookRepository $bookRepository
