@@ -41,3 +41,30 @@ services:
         class: App\Admin\BookAdmin
         tags:
             - { name: sonata.admin, model_class: App\Entity\Book, controller: ~, manager_type: orm, group: admin, label: Book }
+
+    App\EventListener\JWTCreatedListener:
+        arguments: ['@request_stack']
+        tags:
+            - {
+                name: kernel.event_listener,
+                event: lexik_jwt_authentication.on_jwt_created,
+                method: onJWTCreated
+            }
+
+    App\EventListener\JWTDecodedListener:
+        arguments: ['@request_stack']
+        tags:
+            - {
+                name: kernel.event_listener,
+                event: lexik_jwt_authentication.on_jwt_decoded,
+                method: onJWTDecoded
+            }
+
+    App\EventListener\JWTAuthenticationSuccessListener:
+        tags:
+            - {
+                name: kernel.event_listener,
+                event: lexik_jwt_authentication.on_authentication_success,
+                method: onAuthenticationSuccessResponse,
+                priority: -1000,
+            }

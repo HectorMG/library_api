@@ -24,6 +24,10 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
 
+        refresh:
+            pattern:  ^/api/token/refresh
+            stateless: true
+
         api:
             pattern:   ^/api
             stateless: true
@@ -51,6 +55,7 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
          - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+         - { path: ^/api/(login|token/refresh), roles: PUBLIC_ACCESS }
          - { path: ^/api, roles: ROLE_USER }
 
 when@test:
