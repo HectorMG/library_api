@@ -3,6 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\Book;
+use App\Model\Book\BookRepositoryCriteria;
 use App\Repository\BookRepository;
 use App\Service\BookFormProcessor;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -21,9 +22,19 @@ class BooksController extends AbstractFOSRestController
     
     #[Get(path:"/books")]
     #[ViewAtribute(serializerGroups: ["book"], serializerEnableMaxDepthChecks: true)]
-    public function getAction(BookRepository $bookRepository)
+    public function getAction(BookRepository $bookRepository, Request $request)
     {
-        return $bookRepository->findAll();
+        $categoryId = $request->query->get('categoryId');
+        $searchText = $request->query->get('searchText');
+        $page = $request->query->get('page');
+        $itemsPerPage = $request->query->get('itemsPerPage');
+        $criteria = new BookRepositoryCriteria(
+            $categoryId,
+            $searchText, 
+            $itemsPerPage!== null ? \intval($itemsPerPage) : 10, 
+            $page !== null ? \intval($page) : 1
+        );
+        return $bookRepository->findByCriteria($criteria);
     }
 
 

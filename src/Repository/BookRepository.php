@@ -3,7 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Book;
+use App\Model\Book\BookRepositoryCriteria;
+use App\Service\FileDeleter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -18,7 +21,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class BookRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, private FileDeleter $fileDeleter)
     {
         parent::__construct($registry, Book::class);
     }
@@ -37,8 +40,43 @@ class BookRepository extends ServiceEntityRepository
     }
 
     function delete(Book $book) {
+
+        $image = $book->getImage();
+
+        if (null !== $image) {
+            ($this->fileDeleter)($image);
+        }
+
         $this->getEntityManager()->remove($book);
         $this->getEntityManager()->flush();
+    }
+
+    public function findByCriteria(BookRepositoryCriteria $criteria) : array {
+        $queryBuilder = $this->createQueryBuilder('b')
+                        ->orderBy('b.id', 'DESC');
+
+        if ($criteria->categoryId !== null) {
+            $queryBuilder
+                ->andWhere(':categoryId MEMBER OF b.categories')
+                ->setParameter('categoryId', $criteria->categoryId);
+        }
+
+        if ($criteria->searchText !== null) {
+            $queryBuilder
+                ->andWhere('b.title LIKE :searchText or b.description LIKE :searchText')
+                ->setParameter('searchText', "%{$criteria->searchText}%");
+        }
+
+        $queryBuilder->setMaxResults($criteria->itemsPerPage);
+        $queryBuilder->setFirstResult(($criteria->page - 1) * $criteria->itemsPerPage);
+
+        $paginator = new Paginator($queryBuilder->getQuery());
+        return [
+            'total' => \count($paginator),
+            'itemsPerPage' => $criteria->itemsPerPage,
+            'page' => $criteria->page,
+            'data' => iterator_to_array($paginator->getIterator())
+        ];
     }
 
 
