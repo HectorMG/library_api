@@ -25,6 +25,9 @@ services:
     App\Security\TokenAuthenticator:
         arguments:
             $apiToken: '%app.api_token%'
+    
+    App\Service\Utils\HttpClientInterface: '@App\Service\Utils\HttpClient'
+
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

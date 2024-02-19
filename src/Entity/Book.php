@@ -3,12 +3,15 @@
 namespace App\Entity;
 
 use App\Entity\Book\Score;
+use App\Event\Book\BookCreatedEvent;
 use App\Repository\BookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Embedded;
+use DomainException;
+use Symfony\Contracts\EventDispatcher\Event;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
@@ -33,14 +36,44 @@ class Book
     #[Embedded(class: Score::class)]
     private ?Score $score = null;
 
+    private array $domainEvents = [];
+
     public function __construct()
     { 
         $this->score = Score::create();
         $this->categories = new ArrayCollection();
     }
 
+    function patch(array $data): self {
+        if (array_key_exists('score', $data)) {
+            $this->score = Score::create($data['score']);
+        }
+
+        if (array_key_exists('title', $data)) {
+            $title = $data['title'];
+            if ($title === null) {
+                throw new DomainException('Book title cannot be null');
+            }
+            $this->title = $data['title'];
+        }
+        return $this;
+    }
+
     public static function create() : self {
-        return new Book();
+        $book = new Book();
+
+        $event = new BookCreatedEvent();
+        $book->addDomaintEvent($event);
+
+        return $book;
+    }
+
+    public function addDomaintEvent(Event $event) {
+        $this->domainEvents[] = $event;
+    }
+
+    function pullDomainEvents() : array {
+        return $this->domainEvents;
     }
 
     public function getId(): ?int
@@ -109,7 +142,7 @@ class Book
     function updateCategories(Category ...$categories) {
         $originalCategories = new ArrayCollection();
         foreach($this->categories as $category) {
-            $originalCategories->add($categories);
+            $originalCategories->add($category);
         }
 
         //Remove Categories

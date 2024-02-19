@@ -58,7 +58,7 @@ class BooksController extends AbstractFOSRestController
 
 
     /**
-     * @Rest\Post("/book/{id}", requirements={"id"="\d+"})
+     * @Rest\Put("/book/{id}", requirements={"id"="\d+"})
      * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
      */
     public function editAction(
@@ -78,7 +78,28 @@ class BooksController extends AbstractFOSRestController
         $statusCode = $book ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST;
         $data = $book ?? $error;
         $view = View::create($data, $statusCode);
-        return $$view;
+        return $view;
+    }
+
+     /**
+     * @Rest\Patch("/book/{id}", requirements={"id"="\d+"})
+     * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
+     */
+    public function patchAction(
+        int $id, 
+        BookRepository $bookRepository,
+        BookFormProcessor $bookFormProcessor,
+        Request $request
+    )
+    {
+        $book = $bookRepository->find($id);
+        if (!$book) {
+            return View::create('Book not found', Response::HTTP_NOT_FOUND);
+        }
+
+        $data = json_decode($request->getContent(), true);
+        $book->patch($data);
+        return View::create($book, Response::HTTP_OK);
     }
 
 

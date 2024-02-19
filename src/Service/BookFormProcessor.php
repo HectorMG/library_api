@@ -11,27 +11,30 @@ use App\Form\Model\CategoryDto;
 use App\Form\Type\BookFormType;
 use App\Repository\BookRepository;
 use App\Repository\CategoryRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class BookFormProcessor
 {
-    private $bookRepository;
-    private $fileUploader;
-    private $categoryRepository;
-    private $formFactory;
+    private BookRepository $bookRepository;
+    private FileUploader $fileUploader;
+    private CategoryRepository $categoryRepository;
+    private FormFactoryInterface $formFactory;
+    private EventDispatcherInterface $eventDispatcher;
 
     public function __construct(
         BookRepository $bookRepository,
         FileUploader $fileUploader, 
         CategoryRepository $categoryRepository,
-        FormFactoryInterface $formFactory
+        FormFactoryInterface $formFactory,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->bookRepository = $bookRepository;
         $this->fileUploader = $fileUploader;
         $this->categoryRepository = $categoryRepository;
         $this->formFactory = $formFactory;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
 
@@ -42,8 +45,9 @@ class BookFormProcessor
             $bookDto->categories[] = CategoryDto::createFromCategory($category);
         }
 
+        $content = json_decode($request->getContent(), true);
         $form = $this->formFactory->create(BookFormType::class, $bookDto);
-        $form->handleRequest($request);
+        $form->submit($content);
         if (!$form->isSubmitted()) {
             return [null, "form not submitted"];
         }
@@ -68,6 +72,9 @@ class BookFormProcessor
             }
             $book->update($bookDto->title, $fileName, $bookDto->description, Score::create($bookDto->score), ...$categories);
             $this->bookRepository->save($book);
+            foreach ($book->pullDomainEvents() as $event) {
+                $this->eventDispatcher->dispatch($event);
+            }
             return [$book, null];
         }
         return [null, $form];
