@@ -19,7 +19,7 @@ class LibraryController extends AbstractController
         $this->logger = $logger;
     }
     /**
-     * @Route("/books",name="book_list")
+     * @Route("/",name="book_list")
      */
     public function list(BookRepository $bookRepository)
     {
@@ -34,8 +34,8 @@ class LibraryController extends AbstractController
             ];
        }
 
-       $response = $this->json($data);
-       return $response; 
+       return $this->render('index.html.twig', [
+    ]);
     }
     
     /**
