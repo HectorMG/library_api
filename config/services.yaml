@@ -37,7 +37,7 @@ services:
     admin.category:
         class: App\Admin\CategoryAdmin
         tags:
-            - { name: sonata.admin, model_class: App\Entity\Category, controller: ~, manager_type: orm, group: admin, label: Category }
+            - { name: sonata.admin, model_class: App\Entity\Category, controller: App\Controller\Admin\CategoryAdminController, manager_type: orm, group: admin, label: Category }
 
     admin.book:
         class: App\Admin\BookAdmin
