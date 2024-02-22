@@ -24,8 +24,8 @@ class AccessDeniedHandler implements AccessDeniedHandlerInterface
     
     public function handle(Request $request, AccessDeniedException $accessDeniedException)
     {
-        //return new Response("Access denied", 403);
-        $this->session->getFlashBag()->add('error', 'No tiene acceso a esta página');
-        return new RedirectResponse($this->router->generate('app_book'));
+        return new Response("Access denied", 403);
+        //$this->session->getFlashBag()->add('error', 'No tiene acceso a esta página');
+        //return new RedirectResponse($this->router->generate('app_book'));
     }
 }

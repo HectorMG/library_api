@@ -3,10 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Repository\AuthorRepository;
-use App\Service\Author\AuthorFormProcessor;
-use App\Service\Author\DeleteAuthor;
-use App\Service\Author\GetAuthor;
-use App\Service\Utils\Security;
+use App\Service\AuthorFormProcessor;
 use Exception;
 use FOS\RestBundle\Controller\Annotations\{Delete, Get, Post, Put};
 use FOS\RestBundle\Controller\Annotations\View as ViewAttribute;
@@ -24,6 +21,7 @@ class AuthorController extends AbstractFOSRestController
     public function getAction(AuthorRepository $authorRepository)
     {
         $user = $this->getUser();
+        
         return $authorRepository->findBy(['user' => $user]);
     }
 
@@ -36,6 +34,7 @@ class AuthorController extends AbstractFOSRestController
         } catch (Exception) {
             return View::create('Category not found', Response::HTTP_BAD_REQUEST);
         }
+
         return $author;
     }
 
@@ -46,8 +45,11 @@ class AuthorController extends AbstractFOSRestController
         AuthorFormProcessor $authorFormProcessor
     ) {
         [$author, $error] = ($authorFormProcessor)($request);
+
         $statusCode = $author ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST;
+
         $data = $author ?? $error;
+
         return View::create($data, $statusCode);
     }
 

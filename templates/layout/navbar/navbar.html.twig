@@ -1,0 +1,27 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
+	<div class="container-fluid">
+		<a class="navbar-brand" href="{{ path('app_book') }}">
+			<img src="{{asset('images/buk_.png')}}" alt="Logo" width="30" height="24" class="d-inline-block align-text-top">
+			BukBlioteca
+		</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarText">
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
+			<span>
+				{% if app.user %}
+					<a href="{{ path('app_logout') }}" class="link-underline link-underline-opacity-0">
+						<i class="fa fa-sign-out"></i>
+						Cerrar Sesión
+					</a>
+				{% else %}
+					<a href="{{ path('app_login') }}" class="link-underline link-underline-opacity-0">
+						<i class="fa fa-sign-in"></i>
+						Iniciar Sesión
+					</a>
+				{% endif %}
+			</span>
+		</div>
+	</div>
+</nav>

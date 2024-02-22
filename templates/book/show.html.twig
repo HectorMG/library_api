@@ -1,76 +1,79 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ book.title }}{% endblock %}
+{% block title %}
+	{{ book.title }}
+{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-header">
-          <h4>{{ book.title }}</h4>
-        </div>
-        <div class="card-body">
+	{% include "layout/navbar/navbar.html.twig" %}
+	<div class="container mt-5 pt-5">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="card">
+					<div class="card-header">
+						<h4>{{ book.title }}</h4>
+					</div>
+					<div class="card-body">
 
-          <div class="row">
-            <div class="col-md-2">
-              {% if book.image %}
-                <img class="img-fluid text-center" src="{{ url('app_book')  ~  'storage/default/' ~ book.image }}" alt="" width="200px" , height="300px">
-              {% else %}
-                <img class="img-fluid text-center" src="{{ asset('images/no_found.jpeg') }}" alt="" width="200px" , height="300px">
-              {% endif %}
-            </div>
-  
-            <div class="col-md-10">
-              <blockquote class="blockquote mb-1">
-                <p class="text-muted">{{ book.description }}</p>
-              </blockquote>
-  
-              <p class="fw-bold mt-3">Autores:</p>
-              <ul>
-                {% for author in book.authors %}
-                <li>{{ author.name }}</li>
-                {% endfor %}
-              </ul>
-  
-              {% for category in book.categories %}
-              <span class="badge rounded-pill text-bg-primary">{{ category.name }}</span>
-              {% endfor %}
-            </div>
-          </div>
+						<div class="row">
+							<div class="col-md-2">
+								{% if book.image %}
+									<img class="img-fluid text-center" src="{{ url('app_book') ~ 'storage/default/' ~ book.image }}" alt="" width="200px" , height="300px">
+								{% else %}
+									<img class="img-fluid text-center" src="{{ asset('images/no_found.jpeg') }}" alt="" width="200px" , height="300px">
+								{% endif %}
+							</div>
 
-        </div>
-      </div>
-    </div>
-    {% if app.user %}
-    <div class="col-md12 mt-3">
-      <h4>Comentarios</h4>
-      <input id="book_id" type="text" value="{{ book.id }}" hidden>
-      <textarea name="content" class="form-control contenido" name="" id="content" cols="10" rows="3"></textarea>
-      <button class="btn btn-primary mt-1 my-auto float-end add_comment" type="submit">
-        Comentar
-      </button>
-    </div>
-    {% else %}
-    <div class="col-md12 mt-3">
-      <p class="text-center">Para comentar debe
-        <a href="{{ path('app_login') }}">iniciar sesión</a>
-      </p>
-    </div>
-    {% endif %}
+							<div class="col-md-10">
+								<blockquote class="blockquote mb-1">
+									<p class="text-muted">{{ book.description }}</p>
+								</blockquote>
+
+								<p class="fw-bold mt-3">Autores:</p>
+								<ul>
+									{% for author in book.authors %}
+										<li>{{ author.name }}</li>
+									{% endfor %}
+								</ul>
+
+								{% for category in book.categories %}
+									<span class="badge rounded-pill text-bg-primary">{{ category.name }}</span>
+								{% endfor %}
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+			{% if app.user %}
+				<div class="col-md12 mt-3">
+					<h4>Comentarios</h4>
+					<input id="book_id" type="text" value="{{ book.id }}" hidden>
+					<textarea name="content" class="form-control contenido" name="" id="content" cols="10" rows="3"></textarea>
+					<button class="btn btn-primary mt-1 my-auto float-end add_comment" type="submit">
+						Comentar
+					</button>
+				</div>
+			{% else %}
+				<div class="col-md12 mt-3">
+					<p class="text-center">Para comentar debe
+						<a href="{{ path('app_login') }}">iniciar sesión</a>
+					</p>
+				</div>
+			{% endif %}
 
 
-    <div class="col-md-12 my-5">
-      <div id="contenedor-comentarios">
-        {% include 'comment/index.html.twig' with {'comments': book.comments} %}
-      </div>
-    </div>
-  </div>
-</div>
+			<div class="col-md-12 my-5">
+				<div id="contenedor-comentarios">
+					{% include 'comment/index.html.twig' with {'comments': book.comments} %}
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}
 
 
 {% block javascripts %}
-{{ parent() }}
-<script src="{{ asset('js/add_comment.js') }}"></script>
+	{{ parent() }}
+	<script src="{{ asset('js/add_comment.js') }}"></script>
 {% endblock %}

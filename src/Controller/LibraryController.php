@@ -15,7 +15,8 @@ class LibraryController extends AbstractController
 {
     private $logger;
 
-    public function __construct(LoggerInterface $logger) {
+    public function __construct(LoggerInterface $logger)
+    {
         $this->logger = $logger;
     }
     /**
@@ -23,33 +24,33 @@ class LibraryController extends AbstractController
      */
     public function list(BookRepository $bookRepository)
     {
-       $books = $bookRepository->findAll();
+        $books = $bookRepository->findAll();
 
-       $data = [];
-       foreach ($books as $book) {
+        $data = [];
+        foreach ($books as $book) {
             $data[] = [
                 'id' => $book->getId(),
                 'title' => $book->getTitle(),
                 'image' => $book->getImage()
             ];
-       }
+        }
 
-       return $this->render('index.html.twig', [
-    ]);
+        return $this->render('index.html.twig', []);
     }
-    
+
     /**
      * @Route("/book",name="book_create")
      */
-    function createBook(Request $request, EntityManagerInterface $em) : JsonResponse {
+    function createBook(Request $request, EntityManagerInterface $em): JsonResponse
+    {
         $book = new Book();
 
         $title = $request->get('title');
 
         if (empty($title)) {
             $response = $this->json([
-                'error'=>'El título no puede estar vacío',
-                'data'=>null
+                'error' => 'El título no puede estar vacío',
+                'data' => null
             ]);
             return $response;
         }
@@ -58,11 +59,12 @@ class LibraryController extends AbstractController
         $em->persist($book);
         $em->flush();
         $response = $this->json([
-            'data'=>[
+            'data' => [
                 'id' => $book->getId(),
                 'title' => $book->getTitle()
             ]
         ]);
+        
         return $response;
     }
 }

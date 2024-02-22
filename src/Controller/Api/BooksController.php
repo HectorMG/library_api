@@ -19,8 +19,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class BooksController extends AbstractFOSRestController
 {
-    
-    #[Get(path:"/books")]
+
+    #[Get(path: "/books")]
     #[ViewAtribute(serializerGroups: ["book"], serializerEnableMaxDepthChecks: true)]
     public function getAction(BookRepository $bookRepository, Request $request)
     {
@@ -28,17 +28,19 @@ class BooksController extends AbstractFOSRestController
         $searchText = $request->query->get('searchText');
         $page = $request->query->get('page');
         $itemsPerPage = $request->query->get('itemsPerPage');
+        
         $criteria = new BookRepositoryCriteria(
             $categoryId,
-            $searchText, 
-            $itemsPerPage!== null ? \intval($itemsPerPage) : 10, 
+            $searchText,
+            $itemsPerPage !== null ? \intval($itemsPerPage) : 10,
             $page !== null ? \intval($page) : 1
         );
+
         return $bookRepository->findByCriteria($criteria);
     }
 
 
-    #[Get(path:"/book/{id}", requirements: ["id" => "\d+"])]
+    #[Get(path: "/book/{id}", requirements: ["id" => "\d+"])]
     #[ViewAtribute(serializerGroups: ["book"], serializerEnableMaxDepthChecks: true)]
     function getSingleAction(
         int $id,
@@ -53,7 +55,7 @@ class BooksController extends AbstractFOSRestController
         return $book;
     }
 
-    #[Post(path:"/book",requirements:["id" => "\d+"]) ]
+    #[Post(path: "/book", requirements: ["id" => "\d+"])]
     #[ViewAtribute(serializerGroups: ["book"], serializerEnableMaxDepthChecks: true)]
     function postAction(
         Request $request,
@@ -61,71 +63,71 @@ class BooksController extends AbstractFOSRestController
     ) {
         $book = Book::create();
         [$book, $error] = $bookFormProcessor($book, $request);
-        
+
         $statusCode = $book ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST;
         $data = $book ?? $error;
         $view = View::create($data, $statusCode);
+
         return $view;
     }
 
 
-    #[Put(path:"/book/{id}", requirements: ["id" => "\d+"]) ]
+    #[Put(path: "/book/{id}", requirements: ["id" => "\d+"])]
     #[ViewAtribute(serializerGroups: ["book"], serializerEnableMaxDepthChecks: true)]
     public function editAction(
-        int $id, 
+        int $id,
         BookRepository $bookRepository,
         BookFormProcessor $bookFormProcessor,
         Request $request
-    )
-    {
+    ) {
         $book = $bookRepository->find($id);
         if (!$book) {
             return View::create('Book not found', Response::HTTP_NOT_FOUND);
         }
 
         [$book, $error] = $bookFormProcessor($book, $request);
-        
+
         $statusCode = $book ? Response::HTTP_CREATED : Response::HTTP_BAD_REQUEST;
         $data = $book ?? $error;
         $view = View::create($data, $statusCode);
+
         return $view;
     }
 
-     
-    #[Patch(path:"/book/{id}", requirements: ["id" => "\d+"]) ]
+
+    #[Patch(path: "/book/{id}", requirements: ["id" => "\d+"])]
     #[ViewAtribute(serializerGroups: ["book"], serializerEnableMaxDepthChecks: true)]
     public function patchAction(
-        int $id, 
+        int $id,
         BookRepository $bookRepository,
-        BookFormProcessor $bookFormProcessor,
         Request $request
-    )
-    {
+    ) {
         $book = $bookRepository->find($id);
         if (!$book) {
             return View::create('Book not found', Response::HTTP_NOT_FOUND);
         }
 
         $data = json_decode($request->getContent(), true);
+
         $book->patch($data);
+
         return View::create($book, Response::HTTP_OK);
     }
 
 
-    #[Delete(path:"/book/{id}", requirements: ["id" => "\d+"]) ]
+    #[Delete(path: "/book/{id}", requirements: ["id" => "\d+"])]
     #[ViewAtribute(serializerGroups: ["book"], serializerEnableMaxDepthChecks: true)]
     public function deleteAction(
-        int $id, 
+        int $id,
         BookRepository $bookRepository
-    )
-    {
+    ) {
         $book = $bookRepository->find($id);
         if (!$book) {
             return View::create('Book not found', Response::HTTP_NOT_FOUND);
         }
 
         $bookRepository->delete($book);
-        
+
         return View::create("Book deleted", Response::HTTP_NO_CONTENT);
     }
 }

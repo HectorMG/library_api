@@ -8,7 +8,8 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class IsbnControllerTest extends WebTestCase
 {
-    public function testRouteAccordingToRoleMember() {
+    public function testRouteAccordingToRoleMember()
+    {
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UserRepository::class);
 
@@ -17,10 +18,12 @@ class IsbnControllerTest extends WebTestCase
         $client->loginUser($testUser);
 
         $client->request('GET', '/admin/dashboard');
+        
         $this->assertResponseStatusCodeSame(403);
     }
 
-    public function testRouteAccordingToRoleAdmin() {
+    public function testRouteAccordingToRoleAdmin()
+    {
         $client = static::createClient();
         $userRepository = static::getContainer()->get(UserRepository::class);
 
@@ -29,6 +32,7 @@ class IsbnControllerTest extends WebTestCase
         $client->loginUser($testUser);
 
         $client->request('GET', '/admin/dashboard');
+
         $this->assertResponseIsSuccessful();
     }
 }

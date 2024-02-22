@@ -15,19 +15,24 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CategoryControllerTest extends WebTestCase
 {
-
-
     public function testCreateCategoryEmpty()
     {
         $client = static::createClient();
-        $this->sendRequest($client, ["name" => ""]);
+        $this->sendRequest($client, ["name" => ""], "POST");
         $this->assertEquals(Response::HTTP_BAD_REQUEST, $client->getResponse()->getStatusCode());
     }
 
-    private function sendRequest(KernelBrowser $client, array $json)
+    public function testCreateCategorySuccess()
+    {
+        $client = static::createClient();
+        $this->sendRequest($client, ["name" => "Romance"], "POST");
+        $this->assertEquals(Response::HTTP_OK, $client->getResponse()->getStatusCode());
+    }
+
+    private function sendRequest(KernelBrowser $client, array $json, string $method)
     {
         $client->request(
-            'POST',
+            $method,
             '/api/category',
             [],
             [],

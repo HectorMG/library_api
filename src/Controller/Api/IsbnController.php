@@ -14,14 +14,17 @@ class IsbnController extends AbstractFOSRestController
     /**
      * @Rest\Get(path="/isbn")
      * @Rest\View(serializerGroups={"get_book_by_isbn"}, serializerEnableMaxDepthChecks=true)
-    */
+     */
     public function getAction(GetBookByIsbn $getBookByIsbn, Request $request)
     {
         $isbn = $request->get('isbn');
+
         if ($isbn === null) {
             return View::create('Please, specify an isbn', Response::HTTP_BAD_REQUEST);
         }
+        
         $json = ($getBookByIsbn)($isbn);
+
         return View::create($json);
     }
 }

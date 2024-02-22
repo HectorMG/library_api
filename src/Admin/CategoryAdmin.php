@@ -17,8 +17,7 @@ final class CategoryAdmin extends AbstractAdmin
     {
         $filter
             ->add('id')
-            ->add('name')
-        ;
+            ->add('name');
     }
 
     protected function configureRoutes(RouteCollectionInterface $collection): void
@@ -64,7 +63,6 @@ final class CategoryAdmin extends AbstractAdmin
     {
         $show
             ->add('id')
-            ->add('name', null, ['label' => 'Nombre'])
-        ;
+            ->add('name', null, ['label' => 'Nombre']);
     }
 }

@@ -21,13 +21,12 @@ class CommentController extends AbstractController
         CommentRepository $commentRepository,
         Request $request
     ) {
-
         $book = $bookRepository->find((int)$id);
 
         $comment = new Comment();
         $form = $this->createForm(CommentFormType::class, $comment);
         $form->handleRequest($request);
-        
+
         if ($form->isSubmitted() && $form->isValid()) {
             $comment->setBook($book);
             $comment->setUser($this->getUser());
@@ -48,24 +47,23 @@ class CommentController extends AbstractController
 
     #[Route('/comment/{id}', name: 'delete_comment', methods: ['POST'])]
     public function delete(
-        int $id, 
+        int $id,
         CommentRepository $commentRepository
-    )
-    {
+    ) {
         $comment = $commentRepository->find($id);
 
         $commentRepository->delete($comment);
         $this->addFlash('success', 'Se eliminó el comentario con éxito');
+
         return $this->redirectToRoute('book_show', array('id' => $comment->getBook()->getId()));
     }
 
     #[Route('/comment_edit/{id}', name: 'edit_comment', methods: ['POST'])]
     public function update(
-        int $id, 
+        int $id,
         CommentRepository $commentRepository,
         Request $request
-    )
-    {
+    ) {
         $comment = $commentRepository->find($id);
 
         $form = $this->createForm(CommentFormType::class, $comment);
@@ -86,16 +84,5 @@ class CommentController extends AbstractController
 
             return new JsonResponse(['subvista' => $subvista]);
         }
-    }
-
-    /**
-     * @Route("/comentario/{id}/editar", name="editar_comentario")
-     */
-    public function editar(int $id, CommentRepository $commentRepository,)
-    {
-        $comment = $commentRepository->find($id);
-        return $this->render('comment/edit.html.twig', [
-            'comment' => $comment,
-        ]);
     }
 }

@@ -29,7 +29,7 @@ class BookController extends AbstractController
         if (!$book) {
             return $this->json('Book not found', Response::HTTP_NOT_FOUND);
         }
-        
+
         return $this->render('book/show.html.twig', [
             'book' => $book,
         ]);

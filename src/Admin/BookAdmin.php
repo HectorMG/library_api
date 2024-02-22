@@ -19,16 +19,15 @@ final class BookAdmin extends AbstractAdmin
             ->add('title')
             ->add('image')
             ->add('description')
-            ->add('score.value')
-        ;
+            ->add('score.value');
     }
 
     protected function configureListFields(ListMapper $list): void
     {
         $list
             ->add('id')
+            ->add('image', 'string', array('template' => 'admin/book/personalized_list_field.html.twig'))
             ->add('title')
-            ->add('image')
             ->add('categories')
             ->add('authors')
             ->add('description')
@@ -49,16 +48,15 @@ final class BookAdmin extends AbstractAdmin
             ->add('description')
             ->add('categories')
             ->add('authors')
-            ->add('score.value')
-        ;
+            ->add('score.value');
     }
 
     protected function configureShowFields(ShowMapper $show): void
     {
         $show
             ->add('id')
+            ->add('image', 'string', array('template' => 'admin/book/personalized_show_field.html.twig'))
             ->add('title')
-            ->add('image')
             ->add('description')
             ->add('score.value')
             ->add('categories')

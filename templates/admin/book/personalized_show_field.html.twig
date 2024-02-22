@@ -1,0 +1,11 @@
+{% extends "@SonataAdmin/CRUD/base_show_field.html.twig" %}
+
+{% block field %}
+
+    {% if object.image %}
+        <img src="{{ url('app_book')  ~  'storage/default/' ~ object.image }}" width="130px", height="200px">
+    {% else %}
+        <img src="{{ asset('images/no_found.jpeg') }}" width="130px", height="200px">
+    {% endif %}
+
+{% endblock %}

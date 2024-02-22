@@ -6,15 +6,14 @@ use App\Entity\Book;
 use App\Entity\Category;
 use Doctrine\Common\Collections\ArrayCollection;
 use Monolog\Test\TestCase;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+
 class BookEntityTest extends TestCase
 {
-    public function testCanGetAndSetCategories()  {
-
-
+    public function testCanGetAndSetCategories()
+    {
         $category = new Category();
         $category->setName("Ficción");
-        
+
         /** @var Author[]|ArrayCollection */
         $categories = new ArrayCollection();
 
@@ -25,6 +24,7 @@ class BookEntityTest extends TestCase
         $book->addCategory($category);
 
         self::assertCount($categories->count(), $book->getCategories());
+        
         foreach ($categories as $category) {
             self::assertTrue($book->getCategories()->contains($category));
         }

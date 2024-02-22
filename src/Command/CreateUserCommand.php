@@ -23,7 +23,7 @@ class CreateUserCommand extends Command
     protected function configure(): void
     {
         $this->addArgument('username', InputArgument::REQUIRED, 'The username of the user.')
-             ->addArgument('password', InputArgument::REQUIRED, 'The plain password of the user.');
+            ->addArgument('password', InputArgument::REQUIRED, 'The plain password of the user.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -37,7 +37,7 @@ class CreateUserCommand extends Command
         $question = new ChoiceQuestion(
             'Select a role',
             ['ROLE_ADMIN', 'ROLE_MIEMBRO'],
-            0 
+            0
         );
 
         $role = $helper->ask($input, $output, $question);
@@ -50,6 +50,7 @@ class CreateUserCommand extends Command
         $this->userRepository->save($user);
 
         $output->writeln(sprintf('Created user with email: <comment>%s</comment>', $username));
+        
         return Command::SUCCESS;
     }
 }

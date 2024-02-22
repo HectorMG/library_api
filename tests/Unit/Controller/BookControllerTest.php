@@ -6,8 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class BookControllerTest extends WebTestCase
 {
-
-    function testIndex() {
+    function testIndex()
+    {
         $client = static::createClient();
 
         $client->request('GET', '/');

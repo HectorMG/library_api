@@ -1,68 +1,74 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Listado de Libros!{% endblock %}
+{% block title %}Listado de Libros!
+{% endblock %}
 
 {% block body %}
 
-    <div class="mt-5 jumbotron jumbotron-fluid">
-        <div class="container">
-        <h1 class="display-4">BukBlioteca</h1>
-        <p class="lead">Biblioteca de Buk</p>
-        </div>
-    </div>
+	{% include "layout/navbar/navbar.html.twig" %}
 
-    <div class="container mt-5">
-        {% for message in app.flashes('error') %}
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fa fa-danger"></i>
-                {{message}}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        {% endfor %}
-        <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Portada</th>
-                <th scope="col">Título</th>
-                <th scope="col">Descripción</th>
-                <th scope="col">Categoría</th>
-                <th scope="col">Autores</th>
-              </tr>
-            </thead>
-            <tbody class="table-group-divider">
-                {% for book in books %}
-                    <tr>
-                        <th >
-                            {% if book.image %}
-                                <img src="{{absolute_url('storage/default/' ~ book.image)}}" alt="" width="130px", height="200px">
-                            {% else %}
-                                <img src="{{ asset('images/no_found.jpeg') }}" alt="" width="130px", height="200px">
-                            {% endif %}
-                            
-                        </th>
-                        <th>
-                            <a href="{{ path('book_show', {'id': book.id}) }}">
-                                {{ book.title }}
-                            </a>
-                        </th>
-                        <td> {{ book.description }}</td>
-                        <td>
-                            <ul>
-                                {% for category in book.categories %}
-                                    <li>{{ category.name }}</li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                        <td>
-                            <ul>
-                                {% for author in book.authors %}
-                                    <li>{{ author.name }}</li>
-                                {% endfor %}
-                            </ul>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-          </table>
-    </div>
+	<div class="mt-5 pt-5 jumbotron jumbotron-fluid">
+		<div class="container">
+			<h1 class="display-4">BukBlioteca</h1>
+			<p class="lead">Biblioteca de Buk</p>
+		</div>
+	</div>
+
+	<div class="container mt-5">
+		{% for message in app.flashes('error') %}
+			<div class="alert alert-danger alert-dismissible fade show" role="alert">
+				<i class="fa fa-danger"></i>
+				{{message}}
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		{% endfor %}
+		<div class="table-responsive">
+			<table class="table table-responsive">
+				<thead>
+					<tr>
+						<th scope="col">Portada</th>
+						<th scope="col">Título</th>
+						<th scope="col">Descripción</th>
+						<th scope="col">Categoría</th>
+						<th scope="col">Autores</th>
+					</tr>
+				</thead>
+				<tbody class="table-group-divider">
+					{% for book in books %}
+						<tr>
+							<th>
+								{% if book.image %}
+									<img src="{{absolute_url('storage/default/' ~ book.image)}}" alt="" width="130px" , height="200px">
+								{% else %}
+									<img src="{{ asset('images/no_found.jpeg') }}" alt="" width="130px" , height="200px">
+								{% endif %}
+
+							</th>
+							<th>
+								<a href="{{ path('book_show', {'id': book.id}) }}">
+									{{ book.title }}
+								</a>
+							</th>
+							<td>
+								{{ book.description }}</td>
+							<td>
+								<ul>
+									{% for category in book.categories %}
+										<li>{{ category.name }}</li>
+									{% endfor %}
+								</ul>
+							</td>
+							<td>
+								<ul>
+									{% for author in book.authors %}
+										<li>{{ author.name }}</li>
+									{% endfor %}
+								</ul>
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
 {% endblock %}

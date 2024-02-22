@@ -15,7 +15,7 @@ class CategoryController extends AbstractFOSRestController
     /**
      * @Rest\Get(path="/categories")
      * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
-    */
+     */
     public function getAction(CategoryRepository $categoryRepository)
     {
         return $categoryRepository->findAll();
@@ -24,19 +24,21 @@ class CategoryController extends AbstractFOSRestController
     /**
      * @Rest\Post(path="/category")
      * @Rest\View(serializerGroups={"book"}, serializerEnableMaxDepthChecks=true)
-    */
-    public function postAction(Request $request, CategoryRepository $categoryRepository) {
-
+     */
+    public function postAction(Request $request, CategoryRepository $categoryRepository)
+    {
         $categoryDto = new CategoryDto();
         $form = $this->createForm(CategoryFormType::class, $categoryDto);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() &&$form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
             $category = Category::create();
             $category->setName($categoryDto->name);
             $categoryRepository->save($category);
+
             return $category;
         }
+
         return $form;
     }
 }
