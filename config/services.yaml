@@ -74,3 +74,13 @@ services:
     App\Service\ExportInCsv:
         arguments:
             $projectFolder: '%kernel.project_dir%/'
+
+    admin.comment:
+        class: App\Admin\CommentAdmin
+        tags:
+            - { name: sonata.admin, model_class: App\Entity\Comment, controller: ~, manager_type: orm, group: admin, label: Comment }
+
+    admin.author:
+        class: App\Admin\AuthorAdmin
+        tags:
+            - { name: sonata.admin, model_class: App\Entity\Author, controller: ~, manager_type: orm, group: admin, label: Author }

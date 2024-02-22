@@ -10,16 +10,14 @@ use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 
-final class BookAdmin extends AbstractAdmin
+final class CommentAdmin extends AbstractAdmin
 {
     protected function configureDatagridFilters(DatagridMapper $filter): void
     {
         $filter
             ->add('id')
-            ->add('title')
-            ->add('image')
-            ->add('description')
-            ->add('score.value')
+            ->add('content')
+            ->add('created_at')
         ;
     }
 
@@ -27,12 +25,10 @@ final class BookAdmin extends AbstractAdmin
     {
         $list
             ->add('id')
-            ->add('title')
-            ->add('image')
-            ->add('categories')
-            ->add('authors')
-            ->add('description')
-            ->add('score.value')
+            ->add('content')
+            ->add('book')
+            ->add('user')
+            ->add('created_at')
             ->add(ListMapper::NAME_ACTIONS, null, [
                 'actions' => [
                     'show' => [],
@@ -44,12 +40,11 @@ final class BookAdmin extends AbstractAdmin
 
     protected function configureFormFields(FormMapper $form): void
     {
-        $form->add('title')
-            ->add('image')
-            ->add('description')
-            ->add('categories')
-            ->add('authors')
-            ->add('score.value')
+        $form
+            ->add('content')
+            ->add('book')
+            ->add('user')
+            ->add('created_at')
         ;
     }
 
@@ -57,11 +52,8 @@ final class BookAdmin extends AbstractAdmin
     {
         $show
             ->add('id')
-            ->add('title')
-            ->add('image')
-            ->add('description')
-            ->add('score.value')
-            ->add('categories')
-            ->add('authors');
+            ->add('content')
+            ->add('created_at')
+        ;
     }
 }

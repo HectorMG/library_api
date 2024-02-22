@@ -16,10 +16,24 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         
+        api:
+            pattern: ^/api
+            lazy: true
+            provider: app_user_provider
+        
+        #    guard:
+        #        authenticators:
+        #            - App\Security\TokenAuthenticator
+
         main:
             form_login:
                 login_path: app_login
                 check_path: app_login
+
+            entry_point: App\Security\AuthenticationEntryPoint
+            access_denied_handler: App\Security\AccessDeniedHandler
+
+
 
         #login:
         #    pattern: ^/api/login
@@ -40,14 +54,7 @@ security:
         #        authenticators:
         #            - lexik_jwt_authentication.jwt_token_authenticator
 
-        api:
-            pattern: ^/api
-            lazy: true
-            provider: app_user_provider
         
-            guard:
-                authenticators:
-                    - App\Security\TokenAuthenticator
         
 
             # activate different ways to authenticate
@@ -62,7 +69,7 @@ security:
         # - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         # - { path: ^/api/(login|token/refresh), roles: PUBLIC_ACCESS }
          - { path: ^/admin, roles: ROLE_ADMIN }
-         - { path: ^/api, roles: ROLE_USER }
+         - { path: ^/api, roles: PUBLIC_ACCESS }
 
 when@test:
     security:

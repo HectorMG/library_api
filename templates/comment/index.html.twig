@@ -1,0 +1,57 @@
+{% for message in app.flashes('success') %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fa fa-success mr-2"></i>
+            {{message}}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+
+{% for comment in comments %}
+	<div class="card mt-2">
+		<div class="card-body">
+			<div class="row">
+				<div class="col-md-1 d-flex justify-content-center align-items-center p-0 m-0">
+					<div>
+						<img class="text-center img-fluid" width="50px" height="50px" src="{{ asset('images/user.png') }}" alt="">
+					</div>
+				</div>
+				<div class="col-md-11 p-0 m-0">
+					<p>{{ comment.user.email }}</p>
+					<p class="d-inline" id="comment_{{ comment.id }}" data-comment-content="{{ comment.content }}">
+						{{comment.content }}</p>
+
+					{% if app.user and comment.user.id == app.user.id %}
+						<form class="d-inline" action="{{ path('delete_comment', {'id': comment.id}) }}" method="post">
+							<button type="submit" class="btn btn-danger float-end">
+								<i class="fas fa-trash"></i>
+							</button>
+						</form>
+						<button data-comment-id="{{ comment.id }}" type="button" class="d-inline btn btn-primary float-end mx-1" data-bs-toggle="modal" data-bs-target="#edit_comment">
+							<i class="fas fa-edit"></i>
+						</button>
+					{% endif %}
+				</div>
+			</div>
+
+		</div>
+	</div>
+{% endfor %}
+
+
+<div class="modal fade" id="edit_comment" tabindex="-1" aria-labelledby="edit_comment" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h1 class="modal-title fs-5" id="edit_comment">Editar Comentario</h1>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<textarea class="form-control" name="content" id="" cols="30" rows="3"></textarea>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+				<button type="button" id="update_comment" class="btn btn-primary">Editar</button>
+			</div>
+		</div>
+	</div>
+</div>

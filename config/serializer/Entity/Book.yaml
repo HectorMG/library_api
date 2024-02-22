@@ -12,6 +12,9 @@ App\Entity\Book:
     categories:
         groups: ['book']
 
+    authors:
+        groups: ['book']
+
     score:
         groups: ['book']
     
