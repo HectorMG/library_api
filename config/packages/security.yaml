@@ -68,6 +68,7 @@ security:
     access_control:
         # - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         # - { path: ^/api/(login|token/refresh), roles: PUBLIC_ACCESS }
+         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
          - { path: ^/admin, roles: ROLE_ADMIN }
          - { path: ^/api, roles: PUBLIC_ACCESS }
 
