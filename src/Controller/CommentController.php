@@ -52,8 +52,14 @@ class CommentController extends AbstractController
     ) {
         $comment = $commentRepository->find($id);
 
-        $commentRepository->delete($comment);
-        $this->addFlash('success', 'Se eliminó el comentario con éxito');
+        $candDelete = $this->canDeleteOrUpdate($comment->getUser()->getId());
+
+        if (!$candDelete) {
+            $this->addFlash('success', 'No tiene permisos para realizar esta operación');
+        }else{
+            $commentRepository->delete($comment);
+            $this->addFlash('success', 'Se eliminó el comentario con éxito');
+        }
 
         return $this->redirectToRoute('book_show', array('id' => $comment->getBook()->getId()));
     }
@@ -66,23 +72,40 @@ class CommentController extends AbstractController
     ) {
         $comment = $commentRepository->find($id);
 
-        $form = $this->createForm(CommentFormType::class, $comment);
-        $form->handleRequest($request);
+        $candUpdate = $this->canDeleteOrUpdate($comment->getUser()->getId());
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $commentRepository->save($comment);
-
-            $criteria = new CommentRepositoryCriteria('DESC', $comment->getBook()->getId());
-
-            $comments = $commentRepository->findByCriteria($criteria);
-
-            $this->addFlash('success', 'Se actualizó el comentario con éxito');
-
-            $subvista = $this->renderView('comment/index.html.twig', [
-                'comments' => $comments
-            ]);
-
-            return new JsonResponse(['subvista' => $subvista]);
+        if (!$candUpdate) {
+            $this->addFlash('success', 'No tiene permisos para realizar esta operación');
+        }else{
+            $form = $this->createForm(CommentFormType::class, $comment);
+            $form->handleRequest($request);
+    
+            if ($form->isSubmitted() && $form->isValid()) {
+                $commentRepository->save($comment);
+    
+                $this->addFlash('success', 'Se actualizó el comentario con éxito');
+            }
         }
+
+        $criteria = new CommentRepositoryCriteria('DESC', $comment->getBook()->getId());
+        $comments = $commentRepository->findByCriteria($criteria);
+
+        $subvista = $this->renderView('comment/index.html.twig', [
+            'comments' => $comments
+        ]);
+
+        return new JsonResponse(['subvista' => $subvista]);
+    }
+
+    private function canDeleteOrUpdate(string $user_id)
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (in_array('ROLE_ADMIN', $this->getUser()->getRoles()) || $user_id == $user->getId()) 
+        {
+            return true;
+        }
+        return false;
     }
 }
